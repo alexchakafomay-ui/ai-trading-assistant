@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b1120">
+  <title>AI Trading Assistant</title>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --panel: #121c2e;
+      --border: #26344b;
+      --text: #edf3ff;
+      --muted: #93a4bd;
+      --green: #21d49a;
+      --red: #ff647c;
+      --blue: #6ca8ff;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    header {
+      padding: 20px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand {
+      font-size: 19px;
+      font-weight: 800;
+    }
+    .brand span {
+      color: var(--green);
+    }
+    .status {
+      color: var(--green);
+      font-size: 11px;
+      border: 1px solid #206b58;
+      padding: 7px 9px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+    main {
+      max-width: 900px;
+      margin: auto;
+      padding: 18px 14px 35px;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 16px;
+      margin-bottom: 15px;
+    }
+    h2 {
+      font-size: 15px;
+      margin: 0 0 15px;
+    }
+    label {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 7px;
+    }
+    select, button {
+      width: 100%;
+      min-height: 45px;
+      border-radius: 9px;
+      font-size: 14px;
+    }
+    select {
+      color: var(--text);
+      background: #0b1424;
+      border: 1px solid var(--border);
+      padding: 0 11px;
+      margin-bottom: 14px;
+    }
+    button {
+      border: 0;
+      background: var(--green);
+      color: #061b17;
+      font-weight: 800;
+      cursor: pointer;
+      padding: 12px;
+    }
+    button:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+    .chart {
+      height: 440px;
+      overflow: hidden;
+      border-radius: 10px;
+      background: #0b1424;
+    }
+    .chart iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+    .signal {
+      text-align: center;
+      padding: 18px 0;
+    }
+    .signal-label {
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .signal-value {
+      font-size: 30px;
+      font-weight: 900;
+      margin: 10px 0;
+    }
+    .wait {
+      color: var(--blue);
+    }
+    .buy {
+      color: var(--green);
+    }
+    .sell {
+      color: var(--red);
+    }
+    .result {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.8;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+    .notice {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    footer {
+      text-align: center;
+      padding: 12px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">AI <span>TRADING</span></div>
+    <div class="status">● PAPER MODE</div>
+  </header>
+  <main>
+    <h1 style="font-size:25px;margin-bottom:8px">
+      Trading Assistant
+    </h1>
+    <p class="subtitle">
+      Grafik pasar dan ruang analisis trading berbantuan AI.
+      Dirancang untuk penggunaan melalui HP.
+    </p>
+    <section class="card">
+      <h2>Pengaturan Pasar</h2>
+      <label for="symbol">Pasangan trading</label>
+      <select id="symbol">
+        <option value="FX:EURUSD">EUR/USD</option>
+        <option value="FX:GBPUSD">GBP/USD</option>
+        <option value="FX:USDJPY">USD/JPY</option>
+        <option value="FX:AUDUSD">AUD/USD</option>
+        <option value="OANDA:XAUUSD">Gold / XAUUSD</option>
+        <option value="BINANCE:BTCUSDT">BTC/USDT</option>
+      </select>
+      <label for="timeframe">Timeframe</label>
+      <select id="timeframe">
+        <option value="5">5 menit</option>
+        <option value="15">15 menit</option>
+        <option value="60" selected>1 jam</option>
+        <option value="240">4 jam</option>
+        <option value="D">1 hari</option>
+      </select>
+      <button id="updateChart" type="button">
+        Tampilkan Grafik
+      </button>
+    </section>
+    <section class="card">
+      <h2>Grafik TradingView</h2>
+      <div class="chart">
+        <iframe
+          id="chartFrame"
+          title="Grafik TradingView"
+          loading="lazy"
+          referrerpolicy="origin"
+          src="https://s.tradingview.com/widgetembed/?symbol=FX%3AEURUSD&interval=60&theme=dark&style=1&locale=id&toolbarbg=%230b1120&hide_top_toolbar=false&hide_legend=false&allow_symbol_change=true&save_image=false&calendar=false">
+        </iframe>
+      </div>
+    </section>
+    <section class="card">
+      <h2>Analisis AI</h2>
+      <div class="signal">
+        <div class="signal-label">STATUS ANALISIS</div>
+        <div id="signalValue" class="signal-value wait">
+          WAIT
+        </div>
+        <div id="signalCaption" class="result">
+          AI belum terhubung. Belum ada rekomendasi trading.
+        </div>
+      </div>
+      <button id="analyze" type="button">
+        Siapkan Analisis
+      </button>
+      <p id="analysisResult" class="result">
+        Pilih pasangan dan timeframe untuk memulai.
+      </p>
+      <p class="notice">
+        Analisis AI belum aktif. Tombol ini hanya menyiapkan
+        parameter analisis, bukan menghasilkan sinyal pasar.
+        Jangan gunakan WAIT ini sebagai sinyal trading.
+      </p>
+    </section>
+    <section class="card">
+      <h2>Rencana Trading</h2>
+      <div class="result" id="tradePlan">
+        Entry: —
+        Stop Loss: —
+        Take Profit: —
+        Risk/Reward: —
+      </div>
+    </section>
+    <p class="notice">
+      Risiko: Trading forex dan aset kripto dapat menyebabkan
+      kerugian. Grafik dapat mengalami keterlambatan. Website ini
+      belum terhubung ke layanan AI atau broker dan tidak melakukan
+      transaksi uang sungguhan.
+    </p>
+  </main>
+  <footer>
+    AI Trading Assistant · Analisis dan simulasi
+  </footer>
+  <script>
+    const symbol = document.getElementById("symbol");
+    const timeframe = document.getElementById("timeframe");
+    const chartFrame = document.getElementById("chartFrame");
+    const analysisResult = document.getElementById("analysisResult");
+    const signalValue = document.getElementById("signalValue");
+    const signalCaption = document.getElementById("signalCaption");
+    const tradePlan = document.getElementById("tradePlan");
+    document.getElementById("updateChart").addEventListener("click", () => {
+      const params = new URLSearchParams({
+        symbol: symbol.value,
+        interval: timeframe.value,
+        theme: "dark",
+        style: "1",
+        locale: "id",
+        toolbarbg: "#0b1120",
+        hide_top_toolbar: "false",
+        hide_legend: "false",
+        allow_symbol_change: "true",
+        save_image: "false",
+        calendar: "false"
+      });
+      chartFrame.src =
+        "https://s.tradingview.com/widgetembed/?" + params.toString();
+    });
+    document.getElementById("analyze").addEventListener("click", () => {
+      signalValue.textContent = "WAIT";
+      signalValue.className = "signal-value wait";
+      signalCaption.textContent = "Analisis AI belum tersedia.";
+      analysisResult.textContent =
+        "Pasangan: " + symbol.options[symbol.selectedIndex].text +
+        "\nTimeframe: " + timeframe.options[timeframe.selectedIndex].text +
+        "\n\nStatus: Belum dianalisis." +
+        "\nData harga dan layanan AI belum terhubung." +
+        "\nJangan gunakan tampilan ini sebagai sinyal trading.";
+      tradePlan.textContent =
+        "Entry: —\nStop Loss: —\nTake Profit: —\nRisk/Reward: —";
+    });
+  </script>
+</body>
+</html>
